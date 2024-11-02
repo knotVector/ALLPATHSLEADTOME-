@@ -1,85 +1,4 @@
-// Variables for tracking path and timer
-let pathLength = 0;
-let visitedPages = [];
-let startTime;
-let timerInterval;
-let startPage = "Philosophy";
-let finalPage = "Consciousness";
-let network = null;
-let nodes = new vis.DataSet();
-let edges = new vis.DataSet();
-let backgroundMusic;
-let isMusicPlaying = false;
-let clickSound;
-let omSound;
-let backgroundVolume = 0.5;
-let isMuted = false;
-let previousVolume = 0.5;
-let currentPageIndex = -1;
-let availableWords = [];
-
-// Add all your existing functions here
-async function loadWordsFromFile() {
-    try {
-        console.log('Attempting to load words.txt...');
-        const response = await fetch('words.txt');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const text = await response.text();
-        if (!text || text.trim().length === 0) {
-            throw new Error('Words file is empty');
-        }
-        
-        console.log('File content:', text);
-        
-        availableWords = text.split('\n')
-            .map(word => word.trim())
-            .filter(word => word.length > 0);
-            
-        console.log('Processed words:', availableWords);
-
-        if (availableWords.length === 0) {
-            throw new Error('No valid words found in file');
-        }
-
-        // Add "Consciousness" if it's not in the list
-        if (!availableWords.includes("Consciousness")) {
-            availableWords.push("Consciousness");
-        }
-
-        console.log('Final word list:', availableWords);
-        
-        // Update the select options once words are loaded
-        updateWordSelections();
-        
-        // Update mode selections after words are loaded
-        const currentMode = document.getElementById("game-mode").value;
-        updateModeSelections(currentMode);
-        
-    } catch (error) {
-        console.error('Error loading words:', error);
-        console.error('Error details:', {
-            message: error.message,
-            stack: error.stack
-        });
-        alert(`Failed to load words.txt. Make sure you're running through a web server. Error: ${error.message}`);
-        // Fallback to default words if file loading fails
-        availableWords = [...randomStartWords];
-        updateWordSelections();
-    }
-}
-
-// Add all other functions here (updateModeSelections, startGame, resetGame, etc.)
-
-// Then your DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', async function() {
-    // Start the loading progress bar
-    const progressBar = document.querySelector('.loading-progress');
-    progressBar.style.width = '100%';
-
     // Initialize audio elements
     backgroundMusic = document.getElementById('background-music');
     omSound = new Audio('om.mp3');
@@ -145,36 +64,95 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Initialize OM sound and play it at start
-    omSound = new Audio('om.mp3');
-    omSound.volume = 1.0;
+    // Play initial OM sound
     await omSound.play().catch(error => {
         console.error('Error playing initial OM sound:', error);
     });
-
-    // Wait 5 seconds then transition to main content
-    setTimeout(() => {
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const mainContainer = document.querySelector('.container');
-        
-        welcomeScreen.classList.add('fade-out');
-        
-        setTimeout(() => {
-            welcomeScreen.style.display = 'none';
-            mainContainer.classList.remove('hidden');
-            mainContainer.classList.add('fade-in');
-            
-            // Initialize the game
-            loadWordsFromFile();
-            const defaultMode = document.getElementById("game-mode").value;
-            updateModeSelections(defaultMode);
-        }, 1000);
-    }, 5000);
+    
+    // Initialize the game immediately
+    loadWordsFromFile();
+    const defaultMode = document.getElementById("game-mode").value;
+    updateModeSelections(defaultMode);
 });
 
-// Add these functions before the DOMContentLoaded event
+// Variables for tracking path and timer
+let pathLength = 0;
+let visitedPages = [];
+let startTime;
+let timerInterval;
+let startPage = "Philosophy";
+let finalPage = "Consciousness";
+let network = null;
+let nodes = new vis.DataSet();
+let edges = new vis.DataSet();
+let backgroundMusic;
+let isMusicPlaying = false;
+let clickSound;
+let omSound;
+let backgroundVolume = 0.5;
+let isMuted = false;
+let previousVolume = 0.5;
+let currentPageIndex = -1;
+let availableWords = [];
+let backSteps = 0;
 
-// Function to update word selections in dropdowns
+// Add all your existing functions here before DOMContentLoaded
+async function loadWordsFromFile() {
+    try {
+        console.log('Attempting to load words.txt...');
+        const response = await fetch('words.txt');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const text = await response.text();
+        if (!text || text.trim().length === 0) {
+            throw new Error('Words file is empty');
+        }
+        
+        console.log('File content:', text);
+        
+        availableWords = text.split('\n')
+            .map(word => word.trim())
+            .filter(word => word.length > 0);
+            
+        console.log('Processed words:', availableWords);
+
+        if (availableWords.length === 0) {
+            throw new Error('No valid words found in file');
+        }
+
+        // Add "Consciousness" if it's not in the list
+        if (!availableWords.includes("Consciousness")) {
+            availableWords.push("Consciousness");
+        }
+
+        console.log('Final word list:', availableWords);
+        
+        // Update the select options once words are loaded
+        updateWordSelections();
+        
+        // Update mode selections after words are loaded
+        const currentMode = document.getElementById("game-mode").value;
+        updateModeSelections(currentMode);
+        
+    } catch (error) {
+        console.error('Error loading words:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
+        alert(`Failed to load words.txt. Make sure you're running through a web server. Error: ${error.message}`);
+        // Fallback to default words if file loading fails
+        availableWords = ["Philosophy", "Science", "Art", "History", "Technology", 
+                         "Mathematics", "Biology", "Psychology", "Music", "Literature", 
+                         "Engineering", "Astronomy", "Consciousness"];
+        updateWordSelections();
+    }
+}
+
+// Function to update word selections
 function updateWordSelections() {
     const startWordSelect = document.getElementById('start-word');
     const endWordSelect = document.getElementById('end-word');
@@ -229,11 +207,9 @@ async function isGoalReached(linkTitle) {
     const goalLower = finalPage.toLowerCase();
     const titleLower = linkTitle.toLowerCase();
 
-    const isReached = titleLower === goalLower || 
-                     titleLower.split(/[\s_-]+/).includes(goalLower) ||
-                     titleLower.includes(goalLower);
-
-    return isReached;
+    return titleLower === goalLower || 
+           titleLower.split(/[\s_-]+/).includes(goalLower) ||
+           titleLower.includes(goalLower);
 }
 
 // Function to fetch Wikipedia content
@@ -254,12 +230,16 @@ async function fetchWikiContent(title, isBackNavigation = false) {
         updateBackButtonState();
 
         if (await isGoalReached(title)) {
+            if (!isBackNavigation) {
+                pathLength += 1;
+                document.getElementById("path-length").innerText = pathLength;
+                updatePathTrail();
+            }
             endGame();
             return;
         }
 
         const url = `https://en.wikipedia.org/w/api.php?action=parse&page=${title}&prop=text&format=json&origin=*`;
-
         const response = await fetch(url);
         const data = await response.json();
 
@@ -290,10 +270,6 @@ async function fetchWikiContent(title, isBackNavigation = false) {
     } catch (error) {
         console.error("Error fetching Wikipedia content:", error);
         document.getElementById("wiki-content").innerText = "An error occurred while loading content.";
-        
-        document.getElementById("wiki-container").scrollTop = 0;
-        document.getElementById("wiki-content").scrollTop = 0;
-        window.scrollTo(0, 0);
     } finally {
         document.getElementById('loading-spinner').classList.add('hidden');
     }
@@ -327,8 +303,6 @@ function enableLinkNavigation() {
         }
     });
 }
-
-// Add other missing functions (updatePathTrail, startGame, resetGame, etc.)
 
 // Function to update path trail
 function updatePathTrail() {
@@ -398,18 +372,15 @@ function startGame() {
             break;
     }
 
-    // Update the display of start and end words
     document.getElementById("current-start").textContent = startPage;
     document.getElementById("current-goal").textContent = finalPage;
 
     startTime = Date.now();
     timerInterval = setInterval(updateTimeTaken, 1000);
 
-    // Start or restart background music
     backgroundMusic.currentTime = 0;
     backgroundMusic.play();
     isMusicPlaying = true;
-    document.querySelector('.music-icon').textContent = '🔊';
 
     fetchWikiContent(startPage);
 }
@@ -436,45 +407,27 @@ function updateTimeTaken() {
     document.getElementById("time-taken").innerText = timeTaken;
 }
 
-// Functions for path visualization
+// Function to show graph modal
 function showGraphModal() {
     const modal = document.getElementById('graph-modal');
     modal.style.display = 'block';
     updatePathVisualization();
 }
 
+// Function to hide graph modal
 function hideGraphModal() {
     const modal = document.getElementById('graph-modal');
     modal.style.display = 'none';
 }
 
-// Function to calculate score
-function calculateScore(pathLength, timeTaken, backSteps) {
-    const pathScore = 1000 / Math.pow(pathLength, 1.5);
-    const timeScore = 500 / Math.sqrt(timeTaken);
-    const backStepsPenalty = Math.max(0, 300 - (backSteps * 50));
-    let totalScore = Math.round(pathScore + timeScore + backStepsPenalty);
-    return Math.max(100, totalScore);
-}
-
-// Function to format time
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-}
-
-// Add this function for path visualization
+// Function to update path visualization
 function updatePathVisualization() {
     const container = document.getElementById('path-visualization');
     
-    // Clear existing nodes and edges
     nodes.clear();
     edges.clear();
     
-    // Create nodes and edges from visited pages
     visitedPages.forEach((page, index) => {
-        // Add node
         nodes.add({
             id: index,
             label: page,
@@ -491,7 +444,6 @@ function updatePathVisualization() {
             shadow: true
         });
         
-        // Add edge to next node
         if (index < visitedPages.length - 1) {
             edges.add({
                 from: index,
@@ -507,7 +459,6 @@ function updatePathVisualization() {
         }
     });
 
-    // Create the network if it doesn't exist
     if (!network) {
         const data = {
             nodes: nodes,
@@ -548,7 +499,6 @@ function updatePathVisualization() {
 
         network = new vis.Network(container, data, options);
         
-        // Fit the view to show all nodes
         network.once('afterDrawing', function() {
             network.fit({
                 animation: {
@@ -558,13 +508,11 @@ function updatePathVisualization() {
             });
         });
     } else {
-        // Update existing network
         network.setData({
             nodes: nodes,
             edges: edges
         });
         
-        // Fit the view to show all nodes
         network.fit({
             animation: {
                 duration: 1000,
@@ -574,7 +522,23 @@ function updatePathVisualization() {
     }
 }
 
-// Modify the endGame function to handle OM sound
+// Function to calculate score
+function calculateScore(pathLength, timeTaken, backSteps) {
+    const pathScore = 1000 / Math.pow(pathLength, 1.5);
+    const timeScore = 500 / Math.sqrt(timeTaken);
+    const backStepsPenalty = Math.max(0, 300 - (backSteps * 50));
+    let totalScore = Math.round(pathScore + timeScore + backStepsPenalty);
+    return Math.max(100, totalScore);
+}
+
+// Function to format time
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+}
+
+// Add this endGame function
 async function endGame() {
     // Stop the timer
     clearInterval(timerInterval);
@@ -586,7 +550,7 @@ async function endGame() {
     // Get current game mode
     const currentMode = document.getElementById("game-mode").value;
 
-    // Play OM sound and pause background music
+    // Play OM sound and pause background music for consciousness mode
     if (currentMode === "consciousness") {
         backgroundMusic.pause();
         isMusicPlaying = false;

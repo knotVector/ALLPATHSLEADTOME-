@@ -831,50 +831,6 @@ select:focus {
     font-size: 1.1em;
 }
 
-/* Add welcome screen styles */
-#welcome-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.welcome-content {
-    text-align: center;
-}
-
-.welcome-content img {
-    max-width: 90%;
-    max-height: 80vh;
-    object-fit: contain;
-}
-
-.loading-bar {
-    width: 300px;
-    height: 4px;
-    background-color: rgba(255, 255, 255, 0.2);
-    margin: 20px auto;
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.loading-progress {
-    width: 0%;
-    height: 100%;
-    background-color: #0073e6;
-    transition: width 5s linear;
-}
-
-.hidden {
-    display: none;
-}
-
 /* Add fade animations */
 @keyframes fadeOut {
     from { opacity: 1; }
