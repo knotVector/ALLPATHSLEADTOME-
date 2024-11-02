@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Paths Lead to Me</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Left sidebar with controls -->
+        <div class="sidebar">
+            <!-- Add game title image -->
+            <div class="game-title-image">
+                <img src="title.jpg" alt="All Paths Lead to Me" />
+            </div>
+
+            <div id="controls">
+                <div id="mode-selection">
+                    <label for="game-mode">Select Game Mode:</label>
+                    <select id="game-mode">
+                        <option value="consciousness">All Paths Lead to Me (Goal: Consciousness)</option>
+                        <option value="custom">Choose Start and End</option>
+                        <option value="random">Random Adventure</option>
+                    </select>
+                </div>
+
+                <div id="custom-selection" style="display: none;">
+                    <div class="word-selection">
+                        <label for="start-word">Starting Word:</label>
+                        <select id="start-word">
+                            <!-- Options will be populated from words.txt -->
+                        </select>
+                    </div>
+
+                    <div class="word-selection">
+                        <label for="end-word">Ending Word:</label>
+                        <select id="end-word">
+                            <!-- Options will be populated from words.txt -->
+                        </select>
+                    </div>
+                </div>
+
+                <div id="buttons">
+                    <button id="start-game">Start Game</button>
+                    <button id="reset-game">Reset Game</button>
+                </div>
+
+                <div id="wiki-navigation">
+                    <button id="back-button" class="nav-button" disabled>
+                        <span>⬅️</span> Back
+                    </button>
+                    <button id="refresh-button" class="nav-button">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
+
+                <div id="visualization-controls">
+                    <button id="show-graph" class="nav-button">
+                        <span>📊</span> Visualize Path
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game rules moved to bottom -->
+            <div id="game-rules">
+                <h3>How to Play</h3>
+                <div class="game-modes-info">
+                    <h4>Game Modes</h4>
+                    <ul>
+                        <li><strong>All Paths Lead to Me:</strong> Navigate from any starting point to reach "Consciousness"</li>
+                        <li><strong>Choose Start and End:</strong> Select your own starting and ending points</li>
+                        <li><strong>Random Adventure:</strong> Start and end points are randomly selected for you</li>
+                    </ul>
+                </div>
+                <div class="gameplay-rules">
+                    <h4>Gameplay Rules</h4>
+                    <ul>
+                        <li>Click on highlighted links within Wikipedia articles to navigate</li>
+                        <li>Try to reach your target page in the fewest possible clicks</li>
+                        <li>Avoid visiting the same page twice</li>
+                        <li>Use the Back button if you need to retrace your steps</li>
+                        <li>View your path anytime using the Visualize Path button</li>
+                    </ul>
+                </div>
+                <div class="rules-note">
+                    <p><strong>Tip:</strong> Look for links that might create meaningful connections to your target topic!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <!-- Fixed information section -->
+            <div id="fixed-info">
+                <div class="game-info-row">
+                    <div class="game-stat">
+                        <strong>Path Length:</strong> <span id="path-length">0</span>
+                    </div>
+                    <div class="game-stat">
+                        <strong>Time:</strong> <span id="time-taken">0</span>s
+                    </div>
+                    <div class="game-stat">
+                        <strong>Start:</strong> <span id="current-start">-</span>
+                    </div>
+                    <div class="game-stat">
+                        <strong>Goal:</strong> <span id="current-goal">-</span>
+                    </div>
+                </div>
+                <div id="path-container">
+                    <div id="path-trail">Path: </div>
+                </div>
+            </div>
+
+            <!-- Wiki content -->
+            <div id="wiki-container">
+                <div id="wiki-content">Your journey begins here...</div>
+            </div>
+        </div>
+
+        <!-- Audio controls -->
+        <div id="audio-controls">
+            <audio id="background-music" loop>
+                <source src="magnus.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <button id="toggle-music" class="audio-btn">
+                <span class="music-icon">🔊</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="graph-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="path-visualization"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
