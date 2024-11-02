@@ -8,12 +8,35 @@
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <!-- Add this right after the body tag opens, before the container div -->
+    <div id="welcome-screen">
+        <div class="welcome-content">
+            <img src="welcome.jpg" alt="Welcome to All Paths Lead to Me">
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this class to the main container -->
+    <div class="container hidden">
         <!-- Left sidebar with controls -->
         <div class="sidebar">
             <!-- Add game title image -->
             <div class="game-title-image">
                 <img src="title.jpg" alt="All Paths Lead to Me" />
+            </div>
+
+            <div class="audio-controls-sidebar">
+                <div class="volume-control">
+                    <div class="volume-header">
+                        <label for="volume-slider">🔊 Background Music</label>
+                        <button id="mute-button" class="mute-btn">
+                            <span class="mute-icon">🔊</span>
+                        </button>
+                    </div>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50">
+                </div>
             </div>
 
             <div id="controls">
@@ -42,24 +65,20 @@
                     </div>
                 </div>
 
-                <div id="buttons">
-                    <button id="start-game">Start Game</button>
-                    <button id="reset-game">Reset Game</button>
-                </div>
-
-                <div id="wiki-navigation">
-                    <button id="back-button" class="nav-button" disabled>
-                        <span>⬅️</span> Back
-                    </button>
-                    <button id="refresh-button" class="nav-button">
-                        <span>🔄</span> Refresh
-                    </button>
-                </div>
-
-                <div id="visualization-controls">
-                    <button id="show-graph" class="nav-button">
-                        <span>📊</span> Visualize Path
-                    </button>
+                <div id="game-controls">
+                    <div id="main-buttons">
+                        <button id="start-game">
+                            <span>▶️</span> Start Game
+                        </button>
+                        <button id="reset-game">
+                            <span>🔄</span> Reset Game
+                        </button>
+                    </div>
+                    <div id="visualization-controls">
+                        <button id="show-graph">
+                            <span>📊</span> Visualize Path
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -107,6 +126,14 @@
                     <div class="game-stat">
                         <strong>Goal:</strong> <span id="current-goal">-</span>
                     </div>
+                    <div class="nav-buttons">
+                        <button id="back-button" class="nav-button" disabled>
+                            <span>⬅️</span> Back
+                        </button>
+                        <button id="refresh-button" class="nav-button">
+                            <span>🔄</span> Refresh
+                        </button>
+                    </div>
                 </div>
                 <div id="path-container">
                     <div id="path-trail">Path: </div>
@@ -116,6 +143,12 @@
             <!-- Wiki content -->
             <div id="wiki-container">
                 <div id="wiki-content">Your journey begins here...</div>
+            </div>
+
+            <!-- Add this right after the wiki-content div -->
+            <div id="loading-spinner" class="loading-spinner hidden">
+                <div class="spinner"></div>
+                <p>Loading...</p>
             </div>
         </div>
 
